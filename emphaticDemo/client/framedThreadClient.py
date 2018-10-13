@@ -19,6 +19,7 @@ except IndexError:
     inputFileName = "test.txt"    
 
 debug = 0
+filesBeingTransferred=[] # this will be used as the mutex that will contain a list of files being transferred
 
 class ClientThread(Thread):
     def __init__(self, serverHost, serverPort, debug):
@@ -53,28 +54,34 @@ class ClientThread(Thread):
         fs = FramedStreamSock(s, debug=debug)
 
         try:
-            f = open(inputFileName, "r")
-            originalMssg = f.read(100) # read 100 bytes from file at a time
-            if(not len(originalMssg)):
-                print("The file you are trying to transfer is empty. Cancelling transfer.")
-            else:
-                mssg = inputFileName + ' ' + originalMssg
-                print('will send: ' + mssg)
-                mssgBytes = mssg.encode()
-                while True: # Send bytes in 100 byte pieces until there is no more to send
-                    if mssg == '':
-                        break
-                    print('sending mssg now')
-                    fs.sendmsg(mssgBytes) # send mssg
-                    print("received:", fs.receivemsg())
-                    mssg = f.read(100)
+            # add fileName to list
+            if inputFileName not in filesBeingTransferred:
+                filesBeingTransferred.append(inputFileName)
+                f = open(inputFileName, "r")
+                originalMssg = f.read(100) # read 100 bytes from file at a time
+                if(not len(originalMssg)):
+                    print("The file you are trying to transfer is empty. Cancelling transfer.")
+                else:
+                    mssg = inputFileName + ' ' + originalMssg
                     mssgBytes = mssg.encode()
+                    while True: # Send bytes in 100 byte pieces until there is no more to send
+                        if mssg == '':
+                            # no more to read, remove file from list
+                            if inputFileName in filesBeingTransferred:
+                                filesBeingTransferred.remove(inputFileName)
+                            break
+                        fs.sendmsg(mssgBytes) # send mssg
+                        fs.receivemsg()
+                        # print("received:", fs.receivemsg())
+                        mssg = f.read(100)
+                        mssgBytes = mssg.encode()
 
-                f.close()
+                    f.close()
+            else:
+                print('File is already being transferred, cancelling transfer')
+                return
         except FileNotFoundError:
             print('Error. You did not specify a file to transfer or it wasnt found')
 
-for i in range(1):    
-# for i in range(1):
+for i in range(100):    
     ClientThread(serverHost, serverPort, debug)
-

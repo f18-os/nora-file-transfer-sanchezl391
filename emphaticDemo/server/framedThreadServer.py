@@ -18,6 +18,8 @@ lsock.bind(bindAddr)
 lsock.listen(5)
 print("listening on:", bindAddr)
 
+acquiredLock=False
+
 class ServerThread(Thread):
     requestCount = 0            # one instance / class
     def __init__(self, sock, debug):
@@ -30,26 +32,23 @@ class ServerThread(Thread):
         mssg = ''
 
         while True:
-            print('attempting to receive message')
+            # print('attempting to receive message')
             msg = self.fsock.receivemsg()
-            print('successfully received message')
+            # print('successfully received message')
             if not msg:
                 print(self.fsock, "server thread done")
                 break
             mssg += msg.decode('utf-8')
-            print('received: ' + mssg)
             if(not fileName): # Get file name
                 fileName = mssg.split(" ", 1)[0]
                 fileNameLen = len(fileName)
                 mssg = mssg[fileNameLen + 1:]
-                print('filename: ' + fileName)
             requestNum = ServerThread.requestCount
-            # time.sleep(0.001)
+            time.sleep(0.001)
             ServerThread.requestCount = requestNum + 1
             msg = ("%s! (%d)" % (msg, requestNum)).encode()
             self.fsock.sendmsg(msg)
 
-        print('done looping')
          # Creating file on the server with contents of message
         if os.path.isfile(fileName):
             print("The file already exists on the server! Another file will not be created.")

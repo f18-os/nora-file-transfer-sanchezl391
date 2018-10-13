@@ -23,7 +23,6 @@ class FramedStreamSock:
         msgLength = -1
         while True:
             if (state == "getLength"):
-                # print('framedReceive: state get length')
                 match = re.match(b'([^:]+):(.*)', self.rbuf, re.DOTALL | re.MULTILINE) # look for colon
                 if match:
                     lengthStr, self.rbuf = match.groups()
@@ -40,12 +39,10 @@ class FramedStreamSock:
                     payload = self.rbuf[0:msgLength]
                     self.rbuf = self.rbuf[msgLength:]
                     return payload
-            print('sock recv before')
             r = self.sock.recv(100)
-            print('sock recv after')
             self.rbuf += r
             if len(r) == 0:  # zero length read
                 if len(self.rbuf) != 0:
                         print("FramedReceive: incomplete message. \n  state=%s, length=%d, self.rbuf=%s" % (state, msgLength, self.rbuf))
                 return None
-            print("%s:FramedReceive: state=%s, length=%d, self.rbuf=%s" % (self, state, msgLength, self.rbuf))
+            # print("%s:FramedReceive: state=%s, length=%d, self.rbuf=%s" % (self, state, msgLength, self.rbuf))
