@@ -1,6 +1,6 @@
 # TCP Text File Transfer with Threads
 ## What this program does and how it works
-This program has a server(framedThreadServer.py), client(framedThreadClient.py), and proxy(stammerProxy.py). The client sends a text file from the client to the server in 100 byte increments. For every client, a thread will handle the connection and trasferring of data. The proxy can be used to simulate stammering of bytes and redirecting data from one address to another.
+This program has a server(framedThreadServer.py), client(framedThreadClient.py), and proxy(stammerProxy.py). The client sends a text file from the client to the server in 100 byte increments. For every client, a thread will handle the connection and trasferring of data. The proxy can be used to simulate stammering of bytes and redirecting data from one address to another. If a file is already being transferred, the transfer will be cancelled.
 The server must be started before the client because the client will attempt to connect to the server. 
 ## Server
 ### Commands
