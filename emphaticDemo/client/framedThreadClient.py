@@ -54,7 +54,7 @@ class ClientThread(Thread):
         fs = FramedStreamSock(s, debug=debug)
 
         try:
-            # add fileName to list
+            # transfer file if it is not currently being transferred
             if inputFileName not in filesBeingTransferred:
                 filesBeingTransferred.append(inputFileName)
                 f = open(inputFileName, "r")
@@ -72,7 +72,6 @@ class ClientThread(Thread):
                             break
                         fs.sendmsg(mssgBytes) # send mssg
                         fs.receivemsg()
-                        # print("received:", fs.receivemsg())
                         mssg = f.read(100)
                         mssgBytes = mssg.encode()
 

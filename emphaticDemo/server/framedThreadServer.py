@@ -58,7 +58,7 @@ class ServerThread(Thread):
                 f.write(mssg)
                 f.close()
             else:
-                print('The file you are trying to transfer is empty. Cancelling transfer.')
+                print('The file you are trying to transfer is empty. Cancelling transfer. It might be due to being transferred already')
 
 
 while True:
