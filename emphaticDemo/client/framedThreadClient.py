@@ -19,7 +19,8 @@ except IndexError:
     inputFileName = "test.txt"    
 
 debug = 0
-filesBeingTransferred=[] # this will be used as the mutex that will contain a list of files being transferred
+filesBeingTransferred=[] # this will be used as the lock that will contain a list of files being transferred
+# I could use threading.Lock(), but that would block files from being transferred at the same time
 
 class ClientThread(Thread):
     def __init__(self, serverHost, serverPort, debug):
